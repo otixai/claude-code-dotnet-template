@@ -8,8 +8,10 @@ This project uses Claude Code Agent Teams to work GitHub issues from backlog to 
 |---|---|---|
 | **implementer** | Writes feature/fix code in the correct architectural layer | Every issue |
 | **test-writer** | Writes xUnit tests; coordinates on API contract first | Every issue |
-{% if use_reviewer_agent %}| **reviewer** | Reviews completed code; reports issues as checklist | Every issue |
-{% endif %}| **pr-agent** | Opens PR linked to the GitHub issue | After all checks pass |
+{%- if use_reviewer_agent %}
+| **reviewer** | Reviews completed code; reports issues as checklist | Every issue |
+{%- endif %}
+| **pr-agent** | Opens PR linked to the GitHub issue | After all checks pass |
 
 ## Handing Off an Issue
 

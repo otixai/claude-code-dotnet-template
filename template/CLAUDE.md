@@ -2,15 +2,32 @@
 
 ## Stack
 - ASP.NET Core {{ dotnet_version }} / Minimal APIs
-{% if use_efcore %}- Entity Framework Core ({{ db_provider | replace('sqlserver','SQL Server') | replace('postgres','PostgreSQL') | replace('sqlite','SQLite') }}){% endif %}
-{% if use_mediatr and architecture == 'clean' %}- MediatR (CQRS pattern){% endif %}
-{% if test_framework == 'xunit' %}- xUnit + FluentAssertions{% elif test_framework == 'nunit' %}- NUnit + FluentAssertions{% elif test_framework == 'mstest' %}- MSTest + FluentAssertions{% endif %}
-{% if fake_data_lib == 'bogus' %}- Bogus (fake data generation){% elif fake_data_lib == 'autofixture' %}- AutoFixture (convention-based test data){% endif %}
-{% if use_testcontainers and use_efcore %}- Testcontainers (real database in acceptance tests){% endif %}
+{%- if use_efcore %}
+- Entity Framework Core ({{ db_provider | replace('sqlserver','SQL Server') | replace('postgres','PostgreSQL') | replace('sqlite','SQLite') }})
+{%- endif %}
+{%- if use_mediatr and architecture == 'clean' %}
+- MediatR (CQRS pattern)
+{%- endif %}
+{%- if test_framework == 'xunit' %}
+- xUnit + FluentAssertions
+{%- elif test_framework == 'nunit' %}
+- NUnit + FluentAssertions
+{%- elif test_framework == 'mstest' %}
+- MSTest + FluentAssertions
+{%- endif %}
+{%- if fake_data_lib == 'bogus' %}
+- Bogus (fake data generation)
+{%- elif fake_data_lib == 'autofixture' %}
+- AutoFixture (convention-based test data)
+{%- endif %}
+{%- if use_testcontainers and use_efcore %}
+- Testcontainers (real database in acceptance tests)
+{%- endif %}
 - GitHub: https://github.com/{{ github_org }}/{{ project_slug }}
 
 ## Architecture: {{ architecture | title }}
-{% if architecture == 'clean' %}
+{%- if architecture == 'clean' %}
+
 ### Layer Boundaries (enforce strictly)
 | Layer | Path | Allowed dependencies |
 |---|---|---|
@@ -20,18 +37,21 @@
 | Infrastructure | `src/{{ project_slug }}.Infrastructure/` | Application, Domain |
 
 **Rule:** No skipping layers. Api never touches Infrastructure directly.
-{% elif architecture == 'vertical' %}
+{%- elif architecture == 'vertical' %}
+
 ### Feature Structure
 - `src/Features/{FeatureName}/` — self-contained feature slices
 - `src/Shared/` — cross-cutting concerns only
 - Each feature owns its endpoint, handler, validator, and tests
-{% else %}
+{%- else %}
+
 ### Project Structure
 - `src/{{ project_slug }}/` — single project
 - `tests/{{ project_slug }}.Tests/` — all tests
-{% endif %}
+{%- endif %}
 
-{% if testing_approach == 'layered' %}
+{%- if testing_approach == 'layered' %}
+
 ## Testing Philosophy — Layered Testing (Swiss Cheese Model)
 
 No single test layer catches everything. We stack layers so gaps in one are covered by another.
@@ -46,15 +66,23 @@ No single test layer catches everything. We stack layers so gaps in one are cove
 ### Key Principles
 - **Bias toward acceptance tests.** They validate behavior, not implementation — enabling safe refactors.
 - **Black-box by default.** Tests interact through HTTP endpoints or public method signatures. No mocking internals.
-{% if use_efcore and use_testcontainers %}- **Real database in acceptance tests.** Never mock EF Core — use Testcontainers to spin up a real {{ db_provider | replace('sqlserver','SQL Server') | replace('postgres','PostgreSQL') | replace('sqlite','SQLite') }} instance.
-{% elif use_efcore %}- **Real database in acceptance tests.** Never mock EF Core — use an in-memory provider or Testcontainers.{% endif %}
+{%- if use_efcore and use_testcontainers %}
+- **Real database in acceptance tests.** Never mock EF Core — use Testcontainers to spin up a real {{ db_provider | replace('sqlserver','SQL Server') | replace('postgres','PostgreSQL') | replace('sqlite','SQLite') }} instance.
+{%- elif use_efcore %}
+- **Real database in acceptance tests.** Never mock EF Core — use an in-memory provider or Testcontainers.
+{%- endif %}
 - **Test one thing at a time.** Declarative names: `Should_ExpectedBehavior_WhenStateUnderTest`.
-{% if fake_data_lib == 'bogus' %}- **Randomize test data.** Use `Bogus` — hardcoded values hide bugs.
-{% elif fake_data_lib == 'autofixture' %}- **Randomize test data.** Use `AutoFixture` — hardcoded values hide bugs.
-{% elif fake_data_lib == 'none' %}- **Vary test data.** Avoid hardcoded magic values where possible — they hide bugs.{% endif %}
+{%- if fake_data_lib == 'bogus' %}
+- **Randomize test data.** Use `Bogus` — hardcoded values hide bugs.
+{%- elif fake_data_lib == 'autofixture' %}
+- **Randomize test data.** Use `AutoFixture` — hardcoded values hide bugs.
+{%- elif fake_data_lib == 'none' %}
+- **Vary test data.** Avoid hardcoded magic values where possible — they hide bugs.
+{%- endif %}
 - **Deep-object equality.** Prefer `.Should().BeEquivalentTo()` over many individual assertions.
 - **If it's hard to test, it's hard to integrate.** Simplify the design, don't complicate the test.
-{% else %}
+{%- else %}
+
 ## Testing Philosophy — Test Pyramid
 
 Follow the traditional test pyramid: broad base of unit tests, fewer integration tests, fewest end-to-end tests.
@@ -68,12 +96,17 @@ Follow the traditional test pyramid: broad base of unit tests, fewer integration
 ### Key Principles
 - **Unit tests are the foundation.** Every public method should have unit test coverage.
 - **Mock external dependencies** in unit tests — use interfaces and DI for testability.
-{% if use_efcore %}- **Integration tests** validate EF Core queries against a real or in-memory database.{% endif %}
+{%- if use_efcore %}
+- **Integration tests** validate EF Core queries against a real or in-memory database.
+{%- endif %}
 - **Test one thing at a time.** Declarative names: `MethodName_StateUnderTest_ExpectedBehavior`.
-{% if fake_data_lib == 'bogus' %}- **Use `Bogus`** for generating test data — reduces boilerplate and catches edge cases.
-{% elif fake_data_lib == 'autofixture' %}- **Use `AutoFixture`** for generating test data — convention-based, minimal setup.{% endif %}
+{%- if fake_data_lib == 'bogus' %}
+- **Use `Bogus`** for generating test data — reduces boilerplate and catches edge cases.
+{%- elif fake_data_lib == 'autofixture' %}
+- **Use `AutoFixture`** for generating test data — convention-based, minimal setup.
+{%- endif %}
 - **Deep-object equality.** Prefer `.Should().BeEquivalentTo()` over many individual assertions.
-{% endif %}
+{%- endif %}
 
 ## Build & Verify Commands
 ```bash
