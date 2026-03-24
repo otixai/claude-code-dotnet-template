@@ -18,6 +18,7 @@ Each teammate runs in its own **tmux pane** so you can observe and interact with
 {%- if use_reviewer_agent %}
 | **reviewer** | Reviews completed code; reports issues as checklist | Every issue |
 {%- endif %}
+| **devops** | CI/CD pipelines, Dockerfiles, deployment config | Pipeline/infra issues |
 | **pr-agent** | Opens PR linked to the GitHub issue | After all checks pass |
 
 Agent definitions live in `.claude/agents/`. Each file is a markdown prompt with YAML frontmatter.
