@@ -6,7 +6,7 @@
 {% if use_mediatr and architecture == 'clean' %}- MediatR (CQRS pattern){% endif %}
 {% if test_framework == 'xunit' %}- xUnit + FluentAssertions{% elif test_framework == 'nunit' %}- NUnit + FluentAssertions{% elif test_framework == 'mstest' %}- MSTest + FluentAssertions{% endif %}
 {% if fake_data_lib == 'bogus' %}- Bogus (fake data generation){% elif fake_data_lib == 'autofixture' %}- AutoFixture (convention-based test data){% endif %}
-{% if use_testcontainers %}- Testcontainers (real database in acceptance tests){% endif %}
+{% if use_testcontainers and use_efcore %}- Testcontainers (real database in acceptance tests){% endif %}
 - GitHub: https://github.com/{{ github_org }}/{{ project_slug }}
 
 ## Architecture: {{ architecture | title }}
