@@ -1,0 +1,178 @@
+name: Test Template Rendering
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  render-matrix:
+    name: "${{ matrix.name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "dotnet8 / clean / layered / xunit / bogus"
+            copier_args: >-
+              -d project_name="Test API"
+              -d project_slug="test-api"
+              -d github_org="acme"
+              -d dotnet_version="8"
+              -d architecture="clean"
+              -d db_provider="postgres"
+              -d use_mediatr=true
+              -d use_efcore=true
+              -d test_framework="xunit"
+              -d testing_approach="layered"
+              -d fake_data_lib="bogus"
+              -d use_testcontainers=true
+              -d use_acceptance_tests=true
+              -d default_team_size=3
+              -d use_reviewer_agent=true
+              -d claude_model="claude-opus-4-6"
+
+          - name: "dotnet9 / vertical / layered / nunit / autofixture"
+            copier_args: >-
+              -d project_name="Slice App"
+              -d project_slug="slice-app"
+              -d github_org="acme"
+              -d dotnet_version="9"
+              -d architecture="vertical"
+              -d db_provider="sqlserver"
+              -d use_efcore=true
+              -d test_framework="nunit"
+              -d testing_approach="layered"
+              -d fake_data_lib="autofixture"
+              -d use_testcontainers=true
+              -d use_acceptance_tests=true
+              -d default_team_size=3
+              -d use_reviewer_agent=true
+              -d claude_model="claude-sonnet-4-6"
+
+          - name: "dotnet10 / minimal / layered / mstest / none"
+            copier_args: >-
+              -d project_name="Simple"
+              -d project_slug="simple"
+              -d github_org="me"
+              -d dotnet_version="10"
+              -d architecture="minimal"
+              -d db_provider="none"
+              -d use_efcore=false
+              -d test_framework="mstest"
+              -d testing_approach="layered"
+              -d fake_data_lib="none"
+              -d use_acceptance_tests=true
+              -d default_team_size=2
+              -d use_reviewer_agent=false
+              -d claude_model="claude-opus-4-6"
+
+          - name: "dotnet8 / clean / traditional / xunit / bogus"
+            copier_args: >-
+              -d project_name="Classic API"
+              -d project_slug="classic-api"
+              -d github_org="acme"
+              -d dotnet_version="8"
+              -d architecture="clean"
+              -d db_provider="postgres"
+              -d use_mediatr=true
+              -d use_efcore=true
+              -d test_framework="xunit"
+              -d testing_approach="traditional"
+              -d fake_data_lib="bogus"
+              -d default_team_size=3
+              -d use_reviewer_agent=true
+              -d claude_model="claude-opus-4-6"
+
+          - name: "dotnet9 / minimal / traditional / nunit / none"
+            copier_args: >-
+              -d project_name="Mini"
+              -d project_slug="mini"
+              -d github_org="solo"
+              -d dotnet_version="9"
+              -d architecture="minimal"
+              -d db_provider="sqlite"
+              -d use_efcore=true
+              -d test_framework="nunit"
+              -d testing_approach="traditional"
+              -d fake_data_lib="none"
+              -d default_team_size=2
+              -d use_reviewer_agent=true
+              -d claude_model="claude-sonnet-4-6"
+
+          - name: "dotnet10 / vertical / traditional / mstest / autofixture"
+            copier_args: >-
+              -d project_name="Feature App"
+              -d project_slug="feature-app"
+              -d github_org="team"
+              -d dotnet_version="10"
+              -d architecture="vertical"
+              -d db_provider="sqlserver"
+              -d use_efcore=true
+              -d test_framework="mstest"
+              -d testing_approach="traditional"
+              -d fake_data_lib="autofixture"
+              -d default_team_size=3
+              -d use_reviewer_agent=true
+              -d claude_model="claude-opus-4-6"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install copier
+        run: pip install copier
+
+      - name: Render template
+        run: |
+          copier copy --trust --defaults \
+            ${{ matrix.copier_args }} \
+            . /tmp/rendered
+
+      - name: Check for unrendered Jinja artifacts
+        run: |
+          if grep -rnE '\{%|\{\{' /tmp/rendered --include='*.md' --include='*.json'; then
+            echo "::error::Unrendered Jinja tags found in output"
+            exit 1
+          fi
+          echo "No Jinja artifacts found"
+
+      - name: Check for excessive blank lines
+        run: |
+          found=0
+          while IFS= read -r -d '' file; do
+            if python3 -c "
+          import sys
+          content = open('$file').read()
+          if '\n\n\n\n' in content:
+              print(f'Excessive blank lines in: $file')
+              sys.exit(1)
+          "; then
+              :
+            else
+              found=1
+            fi
+          done < <(find /tmp/rendered -name '*.md' -print0)
+          if [ "$found" -eq 1 ]; then
+            echo "::error::Excessive blank lines found"
+            exit 1
+          fi
+          echo "No excessive blank lines found"
+
+      - name: Show rendered files
+        if: always()
+        run: |
+          echo "=== Rendered files ==="
+          find /tmp/rendered -type f | sort
+          echo ""
+          echo "=== CLAUDE.md ==="
+          cat /tmp/rendered/CLAUDE.md
+          echo ""
+          echo "=== test-writer.md ==="
+          cat /tmp/rendered/.claude/agents/test-writer.md
