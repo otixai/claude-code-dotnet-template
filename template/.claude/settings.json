@@ -1,0 +1,22 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(dotnet:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Read(**/.env)",
+      "Read(**/appsettings.Production.json)",
+      "Read(**/*.pfx)",
+      "Read(**/*.key)"
+    ]
+  }
+}

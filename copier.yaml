@@ -1,0 +1,114 @@
+_subdirectory: template
+_min_copier_version: "9.0"
+
+# ── Project Identity ─────────────────────────────────────────────────────────
+project_name:
+  type: str
+  help: "Human-readable project name (e.g. 'My Cool API')"
+
+project_slug:
+  type: str
+  help: "URL/folder-safe name (e.g. 'my-cool-api')"
+  default: "{{ project_name | lower | replace(' ', '-') }}"
+
+github_org:
+  type: str
+  help: "Your GitHub username or org (e.g. 'acme-corp')"
+
+# ── .NET Config ───────────────────────────────────────────────────────────────
+dotnet_version:
+  type: str
+  help: "Target .NET version"
+  default: "9"
+  choices:
+    - "8"
+    - "9"
+    - "10"
+
+architecture:
+  type: str
+  help: "Solution architecture pattern"
+  default: "clean"
+  choices:
+    clean: "Clean Architecture (Api / Application / Domain / Infrastructure)"
+    vertical: "Vertical Slice Architecture (Features / Shared)"
+    minimal: "Minimal (single project)"
+
+db_provider:
+  type: str
+  help: "Database provider"
+  default: "sqlserver"
+  choices:
+    sqlserver: "SQL Server (Microsoft.EntityFrameworkCore.SqlServer)"
+    postgres: "PostgreSQL (Npgsql.EntityFrameworkCore.PostgreSQL)"
+    sqlite: "SQLite (Microsoft.EntityFrameworkCore.Sqlite)"
+    none: "None / bring your own"
+
+use_mediatr:
+  type: bool
+  help: "Use MediatR for CQRS?"
+  default: true
+  when: "{{ architecture == 'clean' }}"
+
+use_efcore:
+  type: bool
+  help: "Use Entity Framework Core?"
+  default: true
+
+# ── Testing Config ───────────────────────────────────────────────────────────
+test_framework:
+  type: str
+  help: "Testing framework"
+  default: "xunit"
+  choices:
+    xunit: "xUnit (recommended)"
+    nunit: "NUnit"
+    mstest: "MSTest"
+
+testing_approach:
+  type: str
+  help: "Testing strategy"
+  default: "layered"
+  choices:
+    layered: "Layered Testing (acceptance-first, Swiss Cheese Model)"
+    traditional: "Traditional (unit-test-heavy, test pyramid)"
+
+fake_data_lib:
+  type: str
+  help: "Fake data generation library for tests"
+  default: "bogus"
+  choices:
+    bogus: "Bogus (fluent fake data generator)"
+    autofixture: "AutoFixture (convention-based object builder)"
+    none: "None / manual test data"
+
+use_testcontainers:
+  type: bool
+  help: "Use Testcontainers for acceptance tests against real databases?"
+  default: true
+  when: "{{ use_efcore and testing_approach == 'layered' }}"
+
+use_acceptance_tests:
+  type: bool
+  help: "Generate an acceptance test project with WebApplicationFactory?"
+  default: true
+  when: "{{ testing_approach == 'layered' }}"
+
+# ── Agent Team Config ─────────────────────────────────────────────────────────
+default_team_size:
+  type: int
+  help: "Default number of teammate agents to spawn per issue"
+  default: 3
+
+use_reviewer_agent:
+  type: bool
+  help: "Include a dedicated code-reviewer agent?"
+  default: true
+
+claude_model:
+  type: str
+  help: "Claude model for agent team sessions"
+  default: "claude-opus-4-6"
+  choices:
+    - "claude-opus-4-6"
+    - "claude-sonnet-4-6"
