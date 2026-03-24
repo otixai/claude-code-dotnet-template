@@ -30,19 +30,19 @@ architecture:
   help: "Solution architecture pattern"
   default: "clean"
   choices:
-    clean: "Clean Architecture (Api / Application / Domain / Infrastructure)"
-    vertical: "Vertical Slice Architecture (Features / Shared)"
-    minimal: "Minimal (single project)"
+    "Clean Architecture (Api / Application / Domain / Infrastructure)": "clean"
+    "Vertical Slice Architecture (Features / Shared)": "vertical"
+    "Minimal (single project)": "minimal"
 
 db_provider:
   type: str
   help: "Database provider"
   default: "sqlserver"
   choices:
-    sqlserver: "SQL Server (Microsoft.EntityFrameworkCore.SqlServer)"
-    postgres: "PostgreSQL (Npgsql.EntityFrameworkCore.PostgreSQL)"
-    sqlite: "SQLite (Microsoft.EntityFrameworkCore.Sqlite)"
-    none: "None / bring your own"
+    "SQL Server (Microsoft.EntityFrameworkCore.SqlServer)": "sqlserver"
+    "PostgreSQL (Npgsql.EntityFrameworkCore.PostgreSQL)": "postgres"
+    "SQLite (Microsoft.EntityFrameworkCore.Sqlite)": "sqlite"
+    "None / bring your own": "none"
 
 use_mediatr:
   type: bool
@@ -61,26 +61,26 @@ test_framework:
   help: "Testing framework"
   default: "xunit"
   choices:
-    xunit: "xUnit (recommended)"
-    nunit: "NUnit"
-    mstest: "MSTest"
+    "xUnit (recommended)": "xunit"
+    "NUnit": "nunit"
+    "MSTest": "mstest"
 
 testing_approach:
   type: str
   help: "Testing strategy"
   default: "layered"
   choices:
-    layered: "Layered Testing (acceptance-first, Swiss Cheese Model)"
-    traditional: "Traditional (unit-test-heavy, test pyramid)"
+    "Layered Testing (acceptance-first, Swiss Cheese Model)": "layered"
+    "Traditional (unit-test-heavy, test pyramid)": "traditional"
 
 fake_data_lib:
   type: str
   help: "Fake data generation library for tests"
   default: "bogus"
   choices:
-    bogus: "Bogus (fluent fake data generator)"
-    autofixture: "AutoFixture (convention-based object builder)"
-    none: "None / manual test data"
+    "Bogus (fluent fake data generator)": "bogus"
+    "AutoFixture (convention-based object builder)": "autofixture"
+    "None / manual test data": "none"
 
 use_testcontainers:
   type: bool
