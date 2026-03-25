@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/otixai/claude-code-dotnet-template/compare/v1.0.0...v1.1.0) (2026-03-25)
+
+### Features
+
+* add devops agent for CI/CD pipeline modifications ([1187d3a](https://github.com/otixai/claude-code-dotnet-template/commit/1187d3a012c4ec76c605834babf068852fb632c5))
+* replace handoff.sh with native Claude Code agent teams via tmux ([76696ce](https://github.com/otixai/claude-code-dotnet-template/commit/76696cefef9c1d3a122947db88280e691d173a09))
+
 ## 1.0.0 (2026-03-24)
 
 ### Features
