@@ -2,21 +2,42 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "model": "{{ claude_model }}",
+  "teammateMode": "tmux",
   "permissions": {
     "allow": [
       "Bash(dotnet:*)",
       "Bash(git:*)",
       "Bash(gh:*)",
-      "Bash(cat:*)",
-      "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep"
     ],
     "deny": [
       "Bash(rm -rf /*)",
+      "Bash(rm -rf .)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
       "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Edit(**/.env)",
+      "Edit(**/.env.*)",
+      "Write(**/.env)",
+      "Write(**/.env.*)",
       "Read(**/appsettings.Production.json)",
+      "Edit(**/appsettings.Production.json)",
+      "Write(**/appsettings.Production.json)",
+      "Edit(**/Migrations/**)",
+      "Write(**/Migrations/**)",
       "Read(**/*.pfx)",
-      "Read(**/*.key)"
+      "Read(**/*.key)",
+      "Read(**/*.p12)"
     ]
   }
 }
