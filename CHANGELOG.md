@@ -1,3 +1,13 @@
+## [1.2.0](https://github.com/otixai/claude-code-dotnet-template/compare/v1.1.0...v1.2.0) (2026-03-26)
+
+### Features
+
+* expand agent permissions and add infra/debugger archetypes ([#3](https://github.com/otixai/claude-code-dotnet-template/issues/3)) ([1d0e795](https://github.com/otixai/claude-code-dotnet-template/commit/1d0e7959a66c0db23dd054aeca337208d9a80b17))
+
+### Documentation
+
+* update README to reflect tmux-based agent teams workflow ([d698874](https://github.com/otixai/claude-code-dotnet-template/commit/d69887440ec4c8a45ea5c5e500458d4f14eaa6b6))
+
 ## [1.1.0](https://github.com/otixai/claude-code-dotnet-template/compare/v1.0.0...v1.1.0) (2026-03-25)
 
 ### Features
